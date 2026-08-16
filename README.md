@@ -59,21 +59,22 @@ matches, `pr` is rupees. Mirror the same list in `tags.html` if you want printab
 it. EAN-13 codes need a valid check digit; `tags.html` marks a bad one with ✕ instead of
 silently printing an unscannable barcode.
 
-## Shareable links
+## Shareable link
 
-Published as private Claude artifacts (share them from the page's share menu):
+The app is deployed on GitHub Pages -- public https, camera allowed, works on any phone:
 
-- app: https://claude.ai/code/artifact/63c03aa1-2f04-44e1-a885-5dd93c586b90
-- test tags: https://claude.ai/code/artifact/a11063ee-ebce-41fc-b0e8-4a0f1193f4d2
+- app:  https://kanishkjondhale-netizen.github.io/bonkers/
+- tags: https://kanishkjondhale-netizen.github.io/bonkers/tags.html
 
-Those pages block external requests, so the QR and scanner libraries are inlined into a
-build. After editing `index.html` or `tags.html`:
+To update it, push to `main` on github.com/kanishkjondhale-netizen/bonkers:
 
 ```bash
-python build_artifact.py
+git add -A && git commit -m "update" && git push
 ```
 
-then re-publish `build/app.html` and `build/tags.html` to the same URLs.
+(There are also private Claude-artifact copies, but the artifact host frames the page and
+framed pages never get the camera -- use the GitHub Pages link on phones. If you edit the
+sources and want the artifact copies refreshed, `python build_artifact.py` rebuilds them.)
 
 ## Notes
 
