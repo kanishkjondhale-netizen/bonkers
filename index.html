@@ -161,7 +161,6 @@ nav button.on::after{content:""; position:absolute; top:-2px; left:26%; right:26
   </div>
   <div class="pad">
     <button class="btn" id="camstart">Start camera</button>
-    <button class="btn ghost" id="simscan">Simulate a scan</button>
     <button class="btn ghost" id="gobag2">Review bag</button>
   </div>
   <p class="note" id="camnote">Camera needs an https:// address (or localhost) plus permission. Open the <a href="tags.html" target="_blank" rel="noopener" style="color:var(--volt)">test tags</a> on a second screen for real, scannable barcodes.</p>
@@ -276,7 +275,7 @@ var CATALOG=[
 var EAN={}; CATALOG.forEach(function(p){EAN[p.ean]=p;});
 var WORDS=["bonk","volt","drip","stack","noq","fit","heat","move"];
 
-var scanIdx=0, passTimer=null, toastTimer=null, orderRef="";
+var passTimer=null, toastTimer=null, orderRef="";
 
 function rupee(n){return "₹"+n.toLocaleString("en-IN");}
 function el(id){return document.getElementById(id);}
@@ -385,7 +384,6 @@ function accept(p){
   addToBag(p);
   toast("ADDED — "+p.nm.toUpperCase(),rupee(p.pr),false);
 }
-el("simscan").addEventListener("click",function(){accept(CATALOG[scanIdx%CATALOG.length]); scanIdx++;});
 el("gobag2").addEventListener("click",function(){show("bag");});
 function manualAdd(){
   var v=el("manual").value.replace(/\s+/g,"");
@@ -495,8 +493,8 @@ window.addEventListener("pagehide",stopCam);
   if(!secure){
     var b=el("httpsbanner");
     b.textContent=(location.protocol==="file:")
-      ? "Opened straight from the file system — the camera stays blocked. Run serve.py in this folder and open the https:// link it prints. Simulate / type-a-code still work."
-      : "This page is on http://, so the browser blocks the camera. Use the https:// link from serve.py. Simulate / type-a-code still work.";
+      ? "Opened straight from the file system — the camera stays blocked. Run serve.py in this folder and open the https:// link it prints. Typing a code still works."
+      : "This page is on http://, so the browser blocks the camera. Use the https:// link from serve.py. Typing a code still works.";
     b.classList.add("on");
     el("camstart").disabled=true;
     hint("Camera needs https");

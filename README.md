@@ -38,7 +38,7 @@ Open `tags.html` on a laptop or second phone — six real EAN-13 barcodes matchi
 catalogue. Point the app's camera at one. Bright screen, 10–20 cm away. All six decode as
 valid EAN-13.
 
-No second screen? Type `8902000000016` into the barcode box, or hit **Simulate a scan**.
+No second screen? Type `8902000000016` into the barcode box.
 
 ## What is real and what is faked
 
