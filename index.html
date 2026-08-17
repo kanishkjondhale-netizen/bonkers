@@ -3,135 +3,183 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0E0E0E">
+<meta name="theme-color" content="#F7F5F1">
 <title>BONKERS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/zxing-browser.min.js"></script>
 <style>
 :root{
-  --bg:#0E0E0E; --card:#1A1A1A; --txt:#F2F2F2; --dim:#8A8A8A;
-  --volt:#D8FF3E; --line:#2C2C2C; --warn:#FF5C39;
+  --bg:#F7F5F1;        /* bone -- page ground */
+  --card:#FFFFFF;      /* paper -- cards, sheets */
+  --txt:#191716;       /* warm ink -- text and primary buttons */
+  --dim:#79706A;       /* warm grey -- secondary text */
+  --line:#E6E0D8;      /* hairline */
+  --volt:#5B4DD1;      /* lilac -- the single accent */
+  --halo:#ECE8FB;      /* lilac tint */
+  --warn:#B85A50;      /* clay -- errors */
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --r:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
 body{
-  font-family:"Helvetica Neue",Inter,Arial,sans-serif;
-  background:#000; color:var(--txt); -webkit-font-smoothing:antialiased;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Inter,Arial,sans-serif;
+  background:#EBE7E0; color:var(--txt); -webkit-font-smoothing:antialiased;
   display:flex; justify-content:center;
 }
 #app{width:100%; max-width:430px; min-height:100dvh; background:var(--bg); display:flex; flex-direction:column; position:relative}
-@media(min-width:480px){ body{padding:24px 0} #app{min-height:calc(100dvh - 48px); outline:2px solid var(--line)} }
+@media(min-width:480px){
+  body{padding:28px 0}
+  #app{min-height:calc(100dvh - 56px); border:1px solid var(--line); box-shadow:0 16px 44px rgba(25,23,22,.10)}
+}
 
-.up{text-transform:uppercase; letter-spacing:.08em}
-.big{font-weight:800; letter-spacing:-.02em}
+.up{text-transform:uppercase; letter-spacing:.1em}
+.big{font-weight:600; letter-spacing:-.015em; text-transform:none}
 .dim{color:var(--dim)}
 .price{font-variant-numeric:tabular-nums}
 
-/* ticker */
-.ticker{overflow:hidden; background:var(--volt); color:#000; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:7px 0; white-space:nowrap}
-.ticker span{display:inline-block; animation:tick 14s linear infinite}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@media(prefers-reduced-motion:reduce){.ticker span{animation:none}}
+header{display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg); z-index:5}
+.mark{width:13px;height:13px;background:var(--volt);border-radius:4px}
+.wordmark{font-size:19px; font-weight:600; letter-spacing:.16em}
+#storebtn{background:transparent;border:0;font:inherit;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);cursor:pointer;padding:6px 0}
 
-header{display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:2px solid var(--line); position:sticky; top:0; background:var(--bg); z-index:5}
-.mark{width:16px;height:16px;background:var(--volt)}
-.wordmark{font-size:22px; font-weight:800; letter-spacing:.04em}
-#storebtn{background:transparent;border:0;font:inherit;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);cursor:pointer;padding:4px 0}
-
-main{flex:1; overflow-y:auto; padding-bottom:96px}
+main{flex:1; overflow-y:auto; padding-bottom:100px}
 .screen{display:none}
 .screen.on{display:block}
 
 .btn{
-  display:block; width:100%; padding:16px; font:inherit; font-size:14px; font-weight:800;
-  text-transform:uppercase; letter-spacing:.08em; cursor:pointer; text-align:center;
-  background:var(--volt); color:#000; border:2px solid var(--volt); border-radius:2px;
+  display:block; width:100%; padding:16px; font:inherit; font-size:15px; font-weight:600;
+  cursor:pointer; text-align:center; transition:opacity .15s ease;
+  background:var(--txt); color:#FBFAF8; border:1px solid var(--txt); border-radius:var(--r);
 }
-.btn.ghost{background:transparent; color:var(--volt)}
-.btn.mono{background:var(--txt); border-color:var(--txt); color:#000}
+.btn.ghost{background:transparent; color:var(--txt); border-color:var(--line)}
+.btn.mono{background:var(--volt); border-color:var(--volt); color:#fff}
 .btn+.btn{margin-top:10px}
-.btn:active{transform:translate(1px,1px)}
+.btn:active{opacity:.82}
 button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--volt); outline-offset:2px}
-.btn[disabled]{opacity:.4; cursor:default}
+.btn[disabled]{opacity:.35; cursor:default}
 
-.pad{padding:16px 18px}
-.hero{padding:26px 18px 8px}
-.hero h1{font-size:34px; font-weight:800; letter-spacing:-.02em; line-height:1.05; text-transform:uppercase}
-.hero p{margin-top:10px; font-size:13px; color:var(--dim); line-height:1.6}
+.pad{padding:18px 20px}
+.hero{padding:30px 20px 4px}
+.hero h1{font-size:33px; font-weight:600; letter-spacing:-.025em; line-height:1.14; text-wrap:balance}
+.hero p{margin-top:14px; font-size:14px; color:var(--dim); line-height:1.65; max-width:35ch}
 
-.viewfinder{margin:16px 18px; height:290px; background:#000; border:2px solid var(--line); border-radius:2px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden}
+.viewfinder{margin:20px; height:278px; background:#E3DED6; border:1px solid var(--line); border-radius:18px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden}
 #vid{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none}
 #vid.on{display:block}
-.reticle{width:200px; height:112px; border:2px solid var(--volt); position:relative; z-index:2}
-.hint{position:absolute; bottom:12px; z-index:2; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--volt); background:rgba(0,0,0,.55); padding:4px 10px}
-#torch{position:absolute; top:10px; right:10px; z-index:3; display:none; background:rgba(0,0,0,.6); border:2px solid var(--volt); color:var(--volt); font:inherit; font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; padding:6px 10px; cursor:pointer; border-radius:2px}
+.reticle{width:206px; height:118px; border:2px solid #fff; border-radius:12px; position:relative; z-index:2; box-shadow:0 0 0 1px rgba(25,23,22,.22), 0 2px 10px rgba(25,23,22,.18)}
+.hint{position:absolute; bottom:14px; z-index:2; font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:#F7F5F1; background:rgba(25,23,22,.72); padding:6px 12px; border-radius:999px}
+#torch{position:absolute; top:12px; right:12px; z-index:3; display:none; background:rgba(25,23,22,.72); border:0; color:#F7F5F1; font:inherit; font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; padding:8px 12px; cursor:pointer; border-radius:999px}
 #torch.on{display:block}
 
-.toast{margin:0 18px 4px; padding:12px 14px; background:var(--card); border:2px solid var(--volt); font-size:13px; display:none; justify-content:space-between; gap:10px; border-radius:2px}
+.toast{margin:0 20px 6px; padding:14px 16px; background:var(--halo); border:1px solid #D8D0F4; color:var(--txt); font-size:13.5px; display:none; justify-content:space-between; gap:10px; border-radius:12px}
 .toast.on{display:flex}
-.toast.bad{border-color:var(--warn); color:var(--warn)}
+.toast.bad{background:#FAEBE9; border-color:#EFD1CC; color:var(--warn)}
 
-.field{display:flex; gap:8px; padding:0 18px 4px}
-.field input{flex:1; min-width:0; padding:14px; font:inherit; font-size:14px; background:var(--card); border:2px solid var(--line); color:var(--txt); border-radius:2px}
-.field input::placeholder{color:var(--dim); text-transform:uppercase; font-size:12px; letter-spacing:.08em}
-.field button{padding:0 18px; font:inherit; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; background:var(--txt); border:2px solid var(--txt); color:#000; cursor:pointer; border-radius:2px}
+.field{display:flex; gap:10px; padding:0 20px 6px}
+.field input{flex:1; min-width:0; padding:15px; font:inherit; font-size:15px; background:var(--card); border:1px solid var(--line); color:var(--txt); border-radius:12px}
+.field input::placeholder{color:var(--dim); font-size:15px}
+.field button{padding:0 20px; font:inherit; font-size:14px; font-weight:600; background:var(--txt); border:1px solid var(--txt); color:#FBFAF8; cursor:pointer; border-radius:12px}
 
-.rows{padding:0 18px}
-.row{display:flex; justify-content:space-between; gap:12px; padding:16px 0; border-bottom:2px solid var(--line)}
-.row .nm{font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.04em}
-.row .sub{font-size:12px; color:var(--dim); margin-top:3px}
-.qty{display:flex; align-items:center; gap:14px; margin-top:10px}
-.qty button{width:28px;height:28px;border:2px solid var(--txt);background:transparent;color:var(--txt);font:inherit;font-weight:800;cursor:pointer;border-radius:2px}
-.qty span{font-size:13px; min-width:16px; text-align:center; font-weight:700}
-.totalline{display:flex; justify-content:space-between; align-items:baseline; padding:20px 18px 6px}
-.totalline .amt{font-size:30px; font-weight:800}
-.empty{padding:60px 18px; text-align:center; color:var(--dim); font-size:13px; line-height:1.8; text-transform:uppercase; letter-spacing:.08em}
+.rows{padding:0 20px}
+.row{display:flex; justify-content:space-between; gap:12px; padding:18px 0; border-bottom:1px solid var(--line)}
+.row .nm{font-size:15px; font-weight:600}
+.row .sub{font-size:13px; color:var(--dim); margin-top:4px}
+.qty{display:flex; align-items:center; gap:14px; margin-top:12px}
+.qty button{width:30px;height:30px;border:1px solid var(--line);background:var(--card);color:var(--txt);font:inherit;font-size:15px;font-weight:600;cursor:pointer;border-radius:999px;line-height:1}
+.qty span{font-size:14px; min-width:16px; text-align:center; font-weight:600; font-variant-numeric:tabular-nums}
+.totalline{display:flex; justify-content:space-between; align-items:baseline; padding:22px 20px 4px}
+.totalline .amt{font-size:31px; font-weight:600; letter-spacing:-.02em}
+.empty{padding:64px 20px; text-align:center; color:var(--dim); font-size:14px; line-height:1.8}
 
-.sheetwrap{position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; align-items:flex-end; justify-content:center; z-index:20}
+.sheetwrap{position:fixed; inset:0; background:rgba(25,23,22,.42); display:none; align-items:flex-end; justify-content:center; z-index:20}
 .sheetwrap.on{display:flex}
-.sheet{width:100%; max-width:430px; max-height:92dvh; overflow-y:auto; background:var(--card); border-top:2px solid var(--volt); padding:24px 18px 30px}
-#payqr{background:#fff; padding:12px; width:200px; margin:16px auto; border-radius:2px; display:flex; align-items:center; justify-content:center; min-height:200px}
+.sheet{width:100%; max-width:430px; max-height:92dvh; overflow-y:auto; background:var(--card); border-radius:22px 22px 0 0; padding:26px 20px 34px; box-shadow:0 -10px 40px rgba(25,23,22,.16)}
+#payqr{background:#fff; padding:12px; width:200px; margin:18px auto; border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; justify-content:center; min-height:200px}
 #payqr img{display:block; width:176px; height:176px; image-rendering:pixelated}
 
-.lbl2{display:block; font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--dim); margin:16px 0 6px}
-.sheet input[type=text]{width:100%; padding:14px; font:inherit; font-size:14px; background:#0E0E0E; border:2px solid var(--line); color:var(--txt); border-radius:2px}
-.err{color:var(--warn); font-size:12px; margin-top:8px; display:none}
+.lbl2{display:block; font-size:10.5px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); margin:18px 0 7px}
+.sheet input[type=text]{width:100%; padding:15px; font:inherit; font-size:15px; background:var(--bg); border:1px solid var(--line); color:var(--txt); border-radius:12px}
+.err{color:var(--warn); font-size:12.5px; margin-top:8px; display:none}
 .err.on{display:block}
 
+/* points */
+.pts{margin:4px 20px 22px; padding:20px; background:var(--card); border:1px solid var(--line); border-radius:16px}
+.ptshead{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+.ptsn{font-size:36px; font-weight:600; letter-spacing:-.03em; line-height:1; margin-top:8px; font-variant-numeric:tabular-nums}
+.ptsn em{font-style:normal; font-size:12px; font-weight:600; letter-spacing:.13em; color:var(--volt); margin-left:5px; vertical-align:3px}
+.tierpill{padding:7px 13px; background:var(--halo); color:var(--volt); border-radius:999px; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap}
+.tierbar{height:4px; background:var(--bg); border-radius:999px; margin:18px 0 9px; overflow:hidden}
+.tierbar i{display:block; height:100%; background:var(--volt); border-radius:999px; transition:width .5s ease}
+.tiernote{font-size:12.5px; color:var(--dim); line-height:1.6}
+
+/* receipts */
+.rollpad{padding:0 20px 20px; display:flex; flex-direction:column; gap:26px}
+.rcpt{background:#fff; border:1px solid var(--line); border-bottom:0; border-radius:6px 6px 0 0; padding:18px 18px 16px; font-family:var(--mono); position:relative; box-shadow:0 2px 10px rgba(25,23,22,.05)}
+.rcpt::after{content:""; position:absolute; left:-1px; right:-1px; bottom:-10px; height:10px;
+  background:
+    linear-gradient(-45deg, transparent 33.333%, #fff 33.333%, #fff 66.667%, transparent 66.667%),
+    linear-gradient(45deg, transparent 33.333%, #fff 33.333%, #fff 66.667%, transparent 66.667%);
+  background-size:14px 20px; background-repeat:repeat-x}
+.rbrand{font-family:inherit; font-size:14px; font-weight:700; letter-spacing:.22em; text-align:center}
+.rstore{font-size:10.5px; letter-spacing:.14em; text-align:center; color:var(--dim); margin-top:4px}
+.rrule{border-top:1px dashed var(--line); margin:13px 0}
+.rline{display:flex; justify-content:space-between; gap:12px; font-size:12px; line-height:1.9; font-variant-numeric:tabular-nums}
+.rline span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.rtotal{display:flex; justify-content:space-between; font-size:14px; font-weight:700; font-variant-numeric:tabular-nums}
+.rpts{background:var(--halo); color:var(--volt); text-align:center; font-size:11.5px; font-weight:700; letter-spacing:.1em; padding:9px; border-radius:6px; margin-top:12px}
+.rmeta{font-size:10.5px; color:var(--dim); letter-spacing:.06em; line-height:1.8; text-align:center; margin-top:12px}
+
+/* printer */
+#printer{position:fixed; inset:0; background:var(--bg); z-index:40; display:none; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px; overflow-y:auto}
+#printer.on{display:flex}
+.pbody{width:262px; height:62px; background:#171615; border-radius:16px 16px 8px 8px; position:relative; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; flex:none}
+.pbody.run{animation:chatter .12s steps(2) infinite}
+@keyframes chatter{from{transform:translateY(0)}to{transform:translateY(.6px)}}
+.pslot{width:214px; height:5px; background:#000; border-radius:999px; box-shadow:0 1px 0 rgba(255,255,255,.09)}
+.pled{position:absolute; top:14px; left:16px; width:6px; height:6px; border-radius:999px; background:#3D3A38}
+.pled.run{background:var(--volt); animation:blink 1s steps(2) infinite}
+@keyframes blink{from{opacity:1}to{opacity:.25}}
+.pfeed{width:238px; overflow:hidden; padding-bottom:12px; flex:none}
+.pfeed .rcpt{border-radius:0 0 0 0; transform:translateY(-101%)}
+.pfeed .rcpt.fed{animation:feed 2s steps(22) forwards}
+@keyframes feed{from{transform:translateY(-101%)}to{transform:translateY(0)}}
+.pstatus{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); font-weight:600; margin:22px 0 16px; min-height:14px}
+#printer .btn{max-width:300px}
+@media(prefers-reduced-motion:reduce){
+  .pbody.run{animation:none}
+  .pled.run{animation:none}
+  .pfeed .rcpt.fed{animation:none; transform:translateY(0)}
+}
+
 /* exit pass */
-#pass{position:fixed; inset:0; background:var(--volt); color:#000; z-index:30; display:none; flex-direction:column; align-items:center; justify-content:flex-start; text-align:center; padding:34px 26px 28px; overflow-y:auto}
+#pass{position:fixed; inset:0; background:var(--halo); color:var(--txt); z-index:30; display:none; flex-direction:column; align-items:center; justify-content:flex-start; text-align:center; padding:38px 26px 30px; overflow-y:auto}
 #pass.on{display:flex}
-#pass .lbl{font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase}
-#pass .count{font-size:64px; font-weight:800; line-height:1; margin:10px 0 2px}
-#qrtile{background:#fff; padding:12px; border-radius:2px; margin:18px 0 10px; min-width:192px; min-height:192px; display:flex; align-items:center; justify-content:center; border:2px solid #000}
+#pass .lbl{font-size:10.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:rgba(25,23,22,.55)}
+#pass .count{font-size:62px; font-weight:600; line-height:1; margin:12px 0 4px; letter-spacing:-.03em}
+#qrtile{background:#fff; padding:14px; border-radius:16px; margin:20px 0 12px; min-width:192px; min-height:192px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(25,23,22,.10)}
 #qrtile img{display:block; width:168px; height:168px; image-rendering:pixelated}
-#pass .code{font-size:16px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; margin:2px 0 10px}
-#drain{width:180px; height:3px; background:rgba(0,0,0,.2); overflow:hidden}
-#drain i{display:block; height:100%; background:#000; transform-origin:left}
-#pass .items{margin-top:18px; font-size:12px; font-weight:600; line-height:1.9; text-transform:uppercase; letter-spacing:.05em}
-#pass .btn{max-width:300px; margin-top:24px; background:#000; border-color:#000; color:var(--volt)}
+#pass .code{font-size:15px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; margin:4px 0 12px; color:var(--volt)}
+#drain{width:180px; height:3px; background:rgba(25,23,22,.12); overflow:hidden; border-radius:999px}
+#drain i{display:block; height:100%; background:var(--volt); transform-origin:left}
+#pass .items{margin-top:20px; font-size:13px; font-weight:500; line-height:1.9; color:rgba(25,23,22,.72)}
+#pass .btn{max-width:300px; margin-top:26px; background:var(--txt); border-color:var(--txt); color:#FBFAF8}
 
-.wrow{padding:16px 18px; border-bottom:2px solid var(--line)}
-.wrow .dt{font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin-bottom:6px}
-.wacts{display:flex; gap:10px; margin-top:12px}
-.wacts button{flex:1; padding:10px; font:inherit; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:transparent; border:2px solid var(--txt); color:var(--txt); cursor:pointer; border-radius:2px}
-
-nav{position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--bg); border-top:2px solid var(--line); display:flex; z-index:10; padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1; padding:15px 0 13px; background:transparent; border:0; font:inherit; cursor:pointer; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); position:relative}
-nav button.on{color:var(--volt)}
-nav button.on::after{content:""; position:absolute; top:-2px; left:26%; right:26%; height:2px; background:var(--volt)}
+nav{position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:rgba(247,245,241,.94); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); border-top:1px solid var(--line); display:flex; z-index:10; padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1; padding:15px 0 17px; background:transparent; border:0; font:inherit; cursor:pointer; font-size:12.5px; font-weight:600; color:var(--dim); position:relative}
+nav button.on{color:var(--txt)}
+nav button.on::after{content:""; position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:999px; background:var(--volt)}
 #bagdot[hidden]{display:none}
-#bagdot{display:inline-block; min-width:17px; padding:1px 4px; font-size:10px; background:var(--volt); color:#000; border-radius:2px; margin-left:4px; letter-spacing:0}
-.note{font-size:11px; color:var(--dim); line-height:1.7; padding:12px 18px}
-.note b{color:var(--txt)}
-.banner{margin:0 18px 8px; padding:12px 14px; border:2px solid var(--warn); color:var(--warn); font-size:12px; line-height:1.6; border-radius:2px; display:none}
+#bagdot{display:inline-block; min-width:18px; padding:2px 6px; font-size:10.5px; background:var(--volt); color:#fff; border-radius:999px; margin-left:5px}
+.note{font-size:12px; color:var(--dim); line-height:1.7; padding:14px 20px}
+.note b{color:var(--txt); font-weight:600}
+.note a{color:var(--volt)}
+.banner{margin:0 20px 8px; padding:13px 15px; background:#FAEBE9; border:1px solid #EFD1CC; color:var(--warn); font-size:12.5px; line-height:1.6; border-radius:12px; display:none}
 .banner.on{display:block}
 </style>
 </head>
 <body>
 <div id="app">
-
-<div class="ticker" aria-hidden="true"><span>NO QUEUE — SCAN — PAY — WALK OUT — NO QUEUE — SCAN — PAY — WALK OUT — NO QUEUE — SCAN — PAY — WALK OUT — NO QUEUE — SCAN — PAY — WALK OUT — </span></div>
 
 <header>
   <div class="mark" aria-hidden="true"></div>
@@ -163,16 +211,16 @@ nav button.on::after{content:""; position:absolute; top:-2px; left:26%; right:26
     <button class="btn" id="camstart">Start camera</button>
     <button class="btn ghost" id="gobag2">Review bag</button>
   </div>
-  <p class="note" id="camnote">Camera needs an https:// address (or localhost) plus permission. Open the <a href="tags.html" target="_blank" rel="noopener" style="color:var(--volt)">test tags</a> on a second screen for real, scannable barcodes.</p>
+  <p class="note" id="camnote">Camera needs an https:// address (or localhost) plus permission. Open the <a href="tags.html" target="_blank" rel="noopener">test tags</a> on a second screen for real, scannable barcodes.</p>
 </section>
 
 <!-- BAG -->
 <section class="screen" id="scr-bag">
-  <div class="pad"><h1 class="big up" style="font-size:24px">Bag</h1></div>
+  <div class="pad"><h1 class="big" style="font-size:24px">Bag</h1></div>
   <div class="rows" id="bagrows"></div>
-  <div class="empty" id="bagempty">Bag's empty.<br>Go scan something.</div>
+  <div class="empty" id="bagempty">Your bag is empty.<br>Go scan something.</div>
   <div id="bagfoot" style="display:none">
-    <div class="totalline"><span class="up dim" style="font-size:11px;font-weight:700">Total incl. GST</span><span class="amt price" id="bagtotal"></span></div>
+    <div class="totalline"><span class="up dim" style="font-size:10.5px;font-weight:600">Total incl. GST</span><span class="amt price" id="bagtotal"></span></div>
     <div class="pad">
       <button class="btn" id="paybtn">Pay by UPI</button>
       <button class="btn ghost" id="keep">Back to scan</button>
@@ -180,11 +228,22 @@ nav button.on::after{content:""; position:absolute; top:-2px; left:26%; right:26
   </div>
 </section>
 
-<!-- VAULT -->
-<section class="screen" id="scr-vault">
-  <div class="pad"><h1 class="big up" style="font-size:24px">Vault</h1></div>
-  <div id="vaultrows"></div>
-  <div class="empty" id="vaultempty">Everything you cop<br>lands here.</div>
+<!-- ROLL -->
+<section class="screen" id="scr-roll">
+  <div class="pad" style="padding-bottom:10px"><h1 class="big" style="font-size:24px">The roll</h1></div>
+  <div class="pts">
+    <div class="ptshead">
+      <div>
+        <span class="lbl2" style="margin:0">Your balance</span>
+        <div class="ptsn"><span id="ptsval">0</span><em>BONKS</em></div>
+      </div>
+      <span class="tierpill" id="tierpill">Rookie</span>
+    </div>
+    <div class="tierbar"><i id="tierfill" style="width:0%"></i></div>
+    <p class="tiernote" id="tiernote">1 BONK for every ₹100 spent. 100 BONKS takes ₹100 off.</p>
+  </div>
+  <div class="rollpad" id="rollrows"></div>
+  <div class="empty" id="rollempty">Nothing printed yet.<br>Your first receipt starts the roll.</div>
 </section>
 
 </main>
@@ -192,7 +251,7 @@ nav button.on::after{content:""; position:absolute; top:-2px; left:26%; right:26
 <!-- SETTINGS SHEET -->
 <div class="sheetwrap" id="setwrap" role="dialog" aria-label="Store settings">
   <div class="sheet">
-    <p class="up" style="font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--volt)">Store settings</p>
+    <p class="up" style="font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--volt)">Store settings</p>
     <label class="lbl2" for="setvpa">UPI ID (VPA) the money lands in</label>
     <input id="setvpa" type="text" inputmode="email" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="98xxxxxxxx@ybl">
     <p class="err" id="setvpaerr">That is not a UPI ID. Format: name@bank</p>
@@ -203,7 +262,7 @@ nav button.on::after{content:""; position:absolute; top:-2px; left:26%; right:26
     <div style="margin-top:20px">
       <button class="btn" id="setsave">Save</button>
       <button class="btn ghost" id="setclose">Close</button>
-      <button class="btn ghost" id="setreset" style="border-color:var(--warn);color:var(--warn)">Wipe bag + vault</button>
+      <button class="btn ghost" id="setreset" style="border-color:var(--warn);color:var(--warn)">Wipe bag + roll</button>
     </div>
     <p class="note" style="padding:14px 0 0">Saved on this device only (localStorage). Nothing leaves the phone.</p>
   </div>
@@ -212,16 +271,24 @@ nav button.on::after{content:""; position:absolute; top:-2px; left:26%; right:26
 <!-- UPI PAYMENT SHEET -->
 <div class="sheetwrap" id="upiwrap" role="dialog" aria-label="UPI payment">
   <div class="sheet" style="text-align:center">
-    <p class="up" style="font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--volt)">Pay by UPI</p>
+    <p class="up" style="font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--volt)">Pay by UPI</p>
     <p class="big price" style="font-size:30px;margin:10px 0 2px" id="upiamt"></p>
-    <p class="dim" style="font-size:12px" id="upiref"></p>
+    <p class="dim" style="font-size:12.5px" id="upiref"></p>
     <div id="payqr"></div>
-    <p class="dim" style="font-size:12px;margin-bottom:14px">Scan with GPay / PhonePe / Paytm,<br>or tap below on this phone.</p>
+    <p class="dim" style="font-size:12.5px;margin-bottom:14px">Scan with GPay / PhonePe / Paytm,<br>or tap below on this phone.</p>
     <a class="btn mono" id="upiopen" href="#" style="text-decoration:none">Open UPI app</a>
-    <button class="btn" id="upipaid">I've paid — show pass</button>
+    <button class="btn" id="upipaid">I've paid — print receipt</button>
     <button class="btn ghost" id="upino">Cancel</button>
     <p class="note" style="padding:12px 0 0">Prototype: payment goes to the UPI ID in store settings and confirmation is manual. Production swaps this sheet for Razorpay/Cashfree with automatic server-side confirmation.</p>
   </div>
+</div>
+
+<!-- RECEIPT PRINTER -->
+<div id="printer" role="dialog" aria-label="Printing receipt">
+  <div class="pbody" id="pbody"><span class="pled" id="pled"></span><span class="pslot"></span></div>
+  <div class="pfeed"><div class="rcpt" id="rcptlive"></div></div>
+  <p class="pstatus" id="pstatus">Printing</p>
+  <button class="btn" id="prdone" style="display:none">Show exit pass</button>
 </div>
 
 <!-- EXIT PASS -->
@@ -240,7 +307,7 @@ nav button.on::after{content:""; position:absolute; top:-2px; left:26%; right:26
 <nav aria-label="Sections">
   <button class="on" data-s="scan">Scan</button>
   <button data-s="bag">Bag <span id="bagdot" hidden>0</span></button>
-  <button data-s="vault">Vault</button>
+  <button data-s="roll">Roll</button>
 </nav>
 
 </div>
@@ -250,7 +317,7 @@ nav button.on::after{content:""; position:absolute; top:-2px; left:26%; right:26
 "use strict";
 
 /* ---------- storage ---------- */
-var K={cfg:"bonkers.cfg.v1", bag:"bonkers.bag.v1", vault:"bonkers.vault.v1", pass:"bonkers.pass.v1"};
+var K={cfg:"bonkers.cfg.v1", bag:"bonkers.bag.v1", orders:"bonkers.orders.v1", pass:"bonkers.pass.v1"};
 function load(key,fallback){
   try{ var raw=localStorage.getItem(key); return raw?JSON.parse(raw):fallback; }
   catch(e){ return fallback; }
@@ -261,8 +328,8 @@ function save(key,val){
 
 var cfg=load(K.cfg,null)||{vpa:"", payee:"BONKERS Store 01", store:"Store 01"};
 var bag=load(K.bag,{})||{};
-var vault=load(K.vault,[])||[];
-var live=load(K.pass,null);          // an unfinished exit pass, if any
+var orders=load(K.orders,[])||[];
+var live=load(K.pass,null);
 
 var CATALOG=[
  {id:"b1", ean:"8902000000016", nm:"Bonk Tee",     pr:1100, sub:"Oversized · heavy cotton"},
@@ -275,7 +342,11 @@ var CATALOG=[
 var EAN={}; CATALOG.forEach(function(p){EAN[p.ean]=p;});
 var WORDS=["bonk","volt","drip","stack","noq","fit","heat","move"];
 
-var passTimer=null, toastTimer=null, orderRef="";
+/* 1 BONK per ₹100 spent; tiers are cumulative lifetime BONKS */
+var PER_POINT=100;
+var TIERS=[{n:"Rookie",at:0},{n:"Regular",at:100},{n:"Insider",at:300},{n:"Certified",at:750}];
+
+var passTimer=null, toastTimer=null, printTimer=null, orderRef="";
 
 function rupee(n){return "₹"+n.toLocaleString("en-IN");}
 function el(id){return document.getElementById(id);}
@@ -295,7 +366,7 @@ function rand(n){
 var VPA_RE=/^[a-zA-Z0-9._-]{2,64}@[a-zA-Z]{2,32}$/;
 function vpaOK(){return VPA_RE.test(cfg.vpa||"");}
 function applyCfg(){
-  el("storebtn").innerHTML=(cfg.store||"Store 01").replace(/[<>&]/g,"")+" ⚙";
+  el("storebtn").textContent=(cfg.store||"Store 01")+" ⚙";
   el("paybtn").textContent=vpaOK()?"Pay by UPI":"Set a UPI ID to accept payment";
 }
 function openSettings(){
@@ -313,16 +384,16 @@ el("setsave").addEventListener("click",function(){
   cfg.vpa=v;
   cfg.payee=el("setname").value.trim()||"BONKERS Store 01";
   cfg.store=el("setstore").value.trim()||"Store 01";
-  save(K.cfg,cfg); applyCfg();
+  save(K.cfg,cfg); applyCfg(); renderRoll();
   el("setwrap").classList.remove("on");
 });
 el("setreset").addEventListener("click",function(){
-  if(!window.confirm("Wipe the bag, the vault and any open pass on this device?"))return;
-  bag={}; vault=[]; live=null;
-  save(K.bag,bag); save(K.vault,vault);
+  if(!window.confirm("Wipe the bag, every receipt and any open pass on this device?"))return;
+  bag={}; orders=[]; live=null;
+  save(K.bag,bag); save(K.orders,orders);
   try{localStorage.removeItem(K.pass);}catch(e){}
-  clearInterval(passTimer); el("pass").classList.remove("on");
-  syncDot(); renderBag(); renderVault();
+  clearInterval(passTimer); el("pass").classList.remove("on"); el("printer").classList.remove("on");
+  syncDot(); renderBag(); renderRoll();
   el("setwrap").classList.remove("on"); show("scan");
 });
 document.querySelectorAll(".sheetwrap").forEach(function(w){
@@ -330,14 +401,14 @@ document.querySelectorAll(".sheetwrap").forEach(function(w){
 });
 
 /* ---------- nav ---------- */
-var screens={scan:"scr-scan",bag:"scr-bag",vault:"scr-vault"};
+var screens={scan:"scr-scan",bag:"scr-bag",roll:"scr-roll"};
 var tabs=document.querySelectorAll("nav button");
 function show(name){
   Object.keys(screens).forEach(function(k){el(screens[k]).classList.toggle("on",k===name);});
   tabs.forEach(function(t){t.classList.toggle("on",t.dataset.s===name);});
   if(name!=="scan")stopCam();
   if(name==="bag")renderBag();
-  if(name==="vault")renderVault();
+  if(name==="roll")renderRoll();
   if(window.scrollTo)window.scrollTo(0,0);
 }
 tabs.forEach(function(t){t.addEventListener("click",function(){show(t.dataset.s);});});
@@ -357,7 +428,7 @@ function renderBag(){
     var r=document.createElement("div"); r.className="row";
     r.innerHTML='<div><div class="nm"></div><div class="sub"></div>'+
       '<div class="qty"><button aria-label="Remove one">−</button><span></span><button aria-label="Add one">+</button></div></div>'+
-      '<span class="price" style="font-size:15px;font-weight:700"></span>';
+      '<span class="price" style="font-size:15px;font-weight:600"></span>';
     r.querySelector(".nm").textContent=p.nm;
     r.querySelector(".sub").textContent=p.sub;
     r.querySelector(".qty span").textContent=bag[k];
@@ -382,7 +453,7 @@ function toast(msg,price,bad){
 }
 function accept(p){
   addToBag(p);
-  toast("ADDED — "+p.nm.toUpperCase(),rupee(p.pr),false);
+  toast("Added — "+p.nm,rupee(p.pr),false);
 }
 el("gobag2").addEventListener("click",function(){show("bag");});
 function manualAdd(){
@@ -390,7 +461,7 @@ function manualAdd(){
   if(!v)return;
   var p=EAN[v];
   if(p){accept(p); el("manual").value="";}
-  else toast("NOT IN STORE — "+v,"",true);
+  else toast("Not in this store — "+v,"",true);
 }
 el("manualadd").addEventListener("click",manualAdd);
 el("manual").addEventListener("keydown",function(e){if(e.key==="Enter")manualAdd();});
@@ -404,7 +475,7 @@ function onCode(raw){
   lastCode=raw; lastAt=now;
   var p=EAN[raw];
   if(p){accept(p); if(navigator.vibrate)navigator.vibrate(40);}
-  else toast("NOT IN STORE — "+raw,"",true);
+  else toast("Not in this store — "+raw,"",true);
 }
 function startNative(){
   var want=["ean_13","ean_8","code_128","upc_a","qr_code"];
@@ -465,7 +536,7 @@ el("camstart").addEventListener("click",function(){
     hint(m==="NotAllowedError"?"Permission denied":m==="NotFoundError"?"No camera found":"Camera failed");
     el("camnote").textContent=(m==="NotAllowedError")
       ? "Permission was denied. Allow the camera for this site in the browser's address-bar settings, then tap Start camera again."
-      : "Camera could not start. If this page is not on https:// (or localhost) the browser blocks it — run serve.py and open the https link.";
+      : "Camera could not start. If this page is not on https:// (or localhost) the browser blocks it — open the https link.";
   });
 });
 el("torch").addEventListener("click",function(){
@@ -487,14 +558,13 @@ function stopCam(){
 document.addEventListener("visibilitychange",function(){ if(document.hidden)stopCam(); });
 window.addEventListener("pagehide",stopCam);
 
-/* secure-context warning up front */
 (function(){
   var secure=window.isSecureContext||location.protocol==="https:"||/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   if(!secure){
     var b=el("httpsbanner");
     b.textContent=(location.protocol==="file:")
-      ? "Opened straight from the file system — the camera stays blocked. Run serve.py in this folder and open the https:// link it prints. Typing a code still works."
-      : "This page is on http://, so the browser blocks the camera. Use the https:// link from serve.py. Typing a code still works.";
+      ? "Opened straight from the file system — the camera stays blocked. Serve the folder over https. Typing a code still works."
+      : "This page is on http://, so the browser blocks the camera. Open it over https. Typing a code still works.";
     b.classList.add("on");
     el("camstart").disabled=true;
     hint("Camera needs https");
@@ -538,14 +608,108 @@ el("paybtn").addEventListener("click",function(){
 });
 el("upino").addEventListener("click",function(){el("upiwrap").classList.remove("on");});
 el("keep").addEventListener("click",function(){show("scan");});
+
+/* ---------- points ---------- */
+function pointsOf(total){return Math.floor(total/PER_POINT);}
+function pointsTotal(){return orders.reduce(function(s,o){return s+(o.pts||0);},0);}
+function tierFor(pts){
+  var cur=TIERS[0],next=null,i;
+  for(i=0;i<TIERS.length;i++){ if(pts>=TIERS[i].at)cur=TIERS[i]; else {next=TIERS[i]; break;} }
+  return {cur:cur,next:next};
+}
+
+/* ---------- receipts ---------- */
+function buildReceipt(host,o){
+  host.innerHTML="";
+  function add(cls,txt){var d=document.createElement("div"); d.className=cls; if(txt!==undefined)d.textContent=txt; host.appendChild(d); return d;}
+  function line(left,right,cls){
+    var d=document.createElement("div"); d.className=cls||"rline";
+    var a=document.createElement("span"); a.textContent=left;
+    var b=document.createElement("span"); b.textContent=right;
+    d.appendChild(a); d.appendChild(b); host.appendChild(d); return d;
+  }
+  add("rbrand","BONKERS");
+  add("rstore",(o.store||"Store 01").toUpperCase());
+  add("rrule");
+  o.items.forEach(function(it){
+    line((it.q>1?it.q+" × ":"")+it.nm, (it.pr*it.q).toLocaleString("en-IN"));
+  });
+  add("rrule");
+  line("TOTAL", rupee(o.total), "rtotal");
+  add("rstore","PAID BY UPI");
+  add("rpts","+"+o.pts+" BONKS EARNED");
+  var m=add("rmeta");
+  m.appendChild(document.createTextNode(o.ref));
+  m.appendChild(document.createElement("br"));
+  m.appendChild(document.createTextNode(o.dt+" · "+o.time));
+}
+
+function renderRoll(){
+  var pts=pointsTotal(), t=tierFor(pts);
+  el("ptsval").textContent=pts;
+  el("tierpill").textContent=t.cur.n;
+  if(t.next){
+    var span=t.next.at-t.cur.at, done=pts-t.cur.at;
+    el("tierfill").style.width=Math.max(3,Math.min(100,Math.round(done/span*100)))+"%";
+    el("tiernote").textContent=(t.next.at-pts)+" BONKS to "+t.next.n+". 1 BONK per ₹100 spent, 100 BONKS takes ₹100 off.";
+  }else{
+    el("tierfill").style.width="100%";
+    el("tiernote").textContent="Top tier. 100 BONKS takes ₹100 off your next bag.";
+  }
+  var w=el("rollrows"); w.innerHTML="";
+  el("rollempty").style.display=orders.length?"none":"block";
+  orders.forEach(function(o){
+    var r=document.createElement("div"); r.className="rcpt";
+    buildReceipt(r,o);
+    w.appendChild(r);
+  });
+}
+
+/* ---------- printer ---------- */
+function showPrinter(o){
+  buildReceipt(el("rcptlive"),o);
+  var rc=el("rcptlive");
+  rc.classList.remove("fed"); void rc.offsetWidth; rc.classList.add("fed");
+  el("pbody").classList.add("run");
+  el("pled").classList.add("run");
+  el("pstatus").textContent="Printing";
+  el("prdone").style.display="none";
+  el("printer").classList.add("on");
+  var quick=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  clearTimeout(printTimer);
+  printTimer=setTimeout(function(){
+    el("pbody").classList.remove("run");
+    el("pled").classList.remove("run");
+    el("pstatus").textContent="Saved to your roll";
+    el("prdone").style.display="block";
+  }, quick?0:2100);
+}
 el("upipaid").addEventListener("click",function(){
   el("upiwrap").classList.remove("on");
   var items=Object.keys(bag).filter(function(k){return findP(k);}).map(function(k){
     var p=findP(k); return {nm:p.nm, sub:p.sub, pr:p.pr, q:bag[k]};
   });
-  live={ref:orderRef, items:items, n:bagCount(), at:Date.now()};
+  if(!items.length)return;
+  var now=new Date(), total=bagTotal();
+  var order={
+    ref:orderRef,
+    items:items,
+    total:total,
+    pts:pointsOf(total),
+    store:cfg.store||"Store 01",
+    dt:now.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}),
+    time:now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}),
+    at:now.getTime()
+  };
+  orders.unshift(order); save(K.orders,orders);
+  live={ref:order.ref, items:items, n:bagCount(), at:order.at};
   save(K.pass,live);
   bag={}; save(K.bag,bag); syncDot();
+  renderRoll();
+  showPrinter(order);
+});
+el("prdone").addEventListener("click",function(){
+  el("printer").classList.remove("on");
   openPass();
 });
 
@@ -576,44 +740,16 @@ function openPass(){
 }
 el("passdone").addEventListener("click",function(){
   clearInterval(passTimer);
-  var today=new Date().toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
-  if(live){
-    live.items.forEach(function(it){
-      for(var i=0;i<it.q;i++)vault.unshift({nm:it.nm, sub:it.sub, pr:it.pr, dt:today, ref:live.ref});
-    });
-  }
-  save(K.vault,vault);
   live=null; try{localStorage.removeItem(K.pass);}catch(e){}
   el("pass").classList.remove("on");
-  show("vault");
+  show("roll");
 });
-
-/* ---------- vault ---------- */
-function renderVault(){
-  var w=el("vaultrows"); w.innerHTML="";
-  el("vaultempty").style.display=vault.length?"none":"block";
-  vault.forEach(function(it){
-    var r=document.createElement("div"); r.className="wrow";
-    r.innerHTML='<div class="dt"></div>'+
-      '<div style="display:flex;justify-content:space-between;align-items:baseline"><span class="vn" style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em"></span><span class="price vp" style="font-size:13px"></span></div>'+
-      '<div class="vs" style="font-size:12px;color:var(--dim);margin-top:2px"></div>'+
-      '<div class="wacts"><button>Resell</button><button>Repair</button></div>';
-    r.querySelector(".dt").textContent=it.dt+" · "+it.ref;
-    r.querySelector(".vn").textContent=it.nm;
-    r.querySelector(".vp").textContent=rupee(it.pr);
-    r.querySelector(".vs").textContent=it.sub;
-    r.querySelectorAll(".wacts button").forEach(function(b){
-      b.addEventListener("click",function(){b.textContent="Requested"; b.disabled=true; b.style.opacity=".45";});
-    });
-    w.appendChild(r);
-  });
-}
 
 /* ---------- boot ---------- */
 applyCfg();
 syncDot();
 renderBag();
-renderVault();
+renderRoll();
 if(live && Date.now()-live.at < 6*3600*1000){ openPass(); }
 else if(live){ live=null; try{localStorage.removeItem(K.pass);}catch(e){} }
 if(!vpaOK()) setTimeout(openSettings,400);
